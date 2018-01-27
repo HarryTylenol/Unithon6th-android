@@ -45,7 +45,10 @@ class SpeechActivity : BaseActivity(), SpeechRecognitionManager.SpeechListener {
 
                 }
             }
-            else toast("권한을 승인 하셔야 이용 가능합니다.")
+            else {
+                finish()
+                toast("권한을 승인 하셔야 이용 가능합니다.")
+            }
         }
 
     }
