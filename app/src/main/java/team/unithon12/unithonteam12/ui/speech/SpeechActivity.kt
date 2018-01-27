@@ -3,7 +3,11 @@ package team.unithon12.unithonteam12.ui.speech
 import android.content.Intent
 import android.os.Bundle
 import com.bumptech.glide.Glide
+import com.github.pwittchen.swipe.library.rx2.Swipe
+import com.github.pwittchen.swipe.library.rx2.SwipeEvent
 import com.jakewharton.rxbinding2.widget.RxSeekBar
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_speech.*
 import kotlinx.android.synthetic.main.layout_speech.*
 import team.unithon12.unithonteam12.R
@@ -66,6 +70,14 @@ class SpeechActivity : BaseActivity(), SpeechRecognitionManager.SpeechListener {
             container_speech.isVisible(false)
         }
 
+        Swipe().observe().subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    when {
+                        it == SwipeEvent.SWIPED_DOWN -> SocketManager.down()
+                        it == SwipeEvent.SWIPED_UP -> SocketManager.up()
+                    }
+                }
     }
 
     override fun onNewIntent(intent: Intent?) {
