@@ -15,8 +15,12 @@ abstract class BaseViewHolder<M>(view: View) : RecyclerView.ViewHolder(view), La
 abstract class BaseAdapter<M, VH : BaseViewHolder<M>> : RecyclerView.Adapter<VH>() {
 
     abstract val list: List<M>
+    abstract val onItemClickListener : (M) -> Unit
 
-    override fun onBindViewHolder(holder: VH, position: Int) = holder.bind(list[position])
+    override fun onBindViewHolder(holder: VH, position: Int) {
+        holder.itemView.setOnClickListener { onItemClickListener(list[position]) }
+        holder.bind(list[position])
+    }
 
     override fun getItemCount() = list.size
 

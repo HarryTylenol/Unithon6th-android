@@ -20,7 +20,7 @@ class ScriptListViewHolder(override val containerView: View) : BaseViewHolder<Sc
     }
 }
 
-class ScriptListAdapter(override val list: List<Script>) : BaseAdapter<Script, ScriptListViewHolder>() {
+class ScriptListAdapter(override val list: List<Script>, override  val onItemClickListener: (Script) -> Unit) : BaseAdapter<Script, ScriptListViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScriptListViewHolder {
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.row_script, parent, false)
         return ScriptListViewHolder(view)

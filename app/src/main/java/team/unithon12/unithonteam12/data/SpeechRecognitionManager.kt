@@ -7,7 +7,6 @@ import com.naver.speech.clientapi.SpeechConfig.LanguageType
 import org.jetbrains.anko.*
 import team.unithon12.unithonteam12.constant.NaverClientConst
 import team.unithon12.unithonteam12.ext.TAG
-import team.unithon12.unithonteam12.ui.main.MainActivity
 import team.unithon12.unithonteam12.ui.speech.SpeechActivity
 
 /**
@@ -54,21 +53,13 @@ class SpeechRecognitionManager(activity: SpeechActivity) : SpeechRecognitionList
     @WorkerThread override fun onPartialResult(partialResult: String?) {
         doAsync {
             uiThread {
-                info("$TAG onPartialResult $partialResult")
+                partialResult?.let { listener.onResult(it) }
             }
         }
     }
 
     @WorkerThread override fun onError(errorCode: Int) = warn("$TAG onError : $errorCode")
-    @WorkerThread override fun onResult(finalResult: SpeechRecognitionResult?) {
-        doAsync {
-            uiThread {
-                finalResult?.results?.let {
-                    if (it.first().isNotBlank()) listener.onResult(it.first())
-                }
-            }
-        }
-    }
+    @WorkerThread override fun onResult(finalResult: SpeechRecognitionResult?) = Unit
 
     @WorkerThread override fun onReady() = info("$TAG onReady")
     @WorkerThread override fun onEndPointDetected() = info("$TAG onEndPointDetected")

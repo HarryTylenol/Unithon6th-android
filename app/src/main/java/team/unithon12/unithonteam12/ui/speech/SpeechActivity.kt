@@ -2,10 +2,11 @@ package team.unithon12.unithonteam12.ui.speech
 
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_speech.*
-import org.jetbrains.anko.toast
 import team.unithon12.unithonteam12.R
+import team.unithon12.unithonteam12.data.SocketManager
 import team.unithon12.unithonteam12.data.SpeechRecognitionManager
 import team.unithon12.unithonteam12.ui._base.BaseActivity
+import team.unithon12.unithonteam12.util.UserInfo
 
 /**
  * Created by baghyeongi on 2018. 1. 27..
@@ -22,10 +23,15 @@ class SpeechActivity : BaseActivity(), SpeechRecognitionManager.SpeechListener {
                 else -> srm.start()
             }
         }
+        SocketManager.connect {
+            // Connected
+        }
     }
 
     override fun onResult(text: String) {
-        toast(text)
+        if (SocketManager.isConnected && UserInfo.email != null) {
+            SocketManager.emmit(UserInfo.email!!, text)
+        }
     }
 
     override fun onStart() {

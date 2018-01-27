@@ -3,7 +3,6 @@ package team.unithon12.unithonteam12.data
 import android.util.Log
 import io.socket.client.IO
 import io.socket.client.Socket
-import io.socket.engineio.client.transports.WebSocket
 import team.unithon12.unithonteam12.constant.ServerConst
 
 object SocketManager {
@@ -12,8 +11,7 @@ object SocketManager {
         IO.socket(
                 ServerConst.URL,
                 IO.Options().apply {
-                    port = ServerConst.PORT
-                    transports = arrayOf(WebSocket.NAME)
+//                    port = ServerConst.PORT
                 }
         ).apply {
             on(Socket.EVENT_CONNECT, {
@@ -29,9 +27,9 @@ object SocketManager {
             }).on(Socket.EVENT_MESSAGE, {
                 Log.d("EVENT_MESSAGE", "${it.firstOrNull()} s")
             })
-
         }
     }
+
     val isConnected get() = socket.connected()
 
     fun connect(callback: (Array<out Any>) -> Unit) {
