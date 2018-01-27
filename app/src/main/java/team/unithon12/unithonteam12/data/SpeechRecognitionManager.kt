@@ -20,20 +20,16 @@ class SpeechRecognitionManager(mainActivity: MainActivity) : SpeechRecognitionLi
         fun onResult(text: String)
     }
 
-    private var listener: SpeechListener
-    private val recognizer: SpeechRecognizer
+    private var listener: SpeechListener = mainActivity
+    private val recognizer: SpeechRecognizer by lazy { SpeechRecognizer(mainActivity, NaverClientConst.CLIENT_ID) }
 
     private var isStop = false
     val isRunning get() = recognizer.isRunning
 
-    init {
-        listener = mainActivity
-        recognizer = SpeechRecognizer(mainActivity, NaverClientConst.CLIENT_ID)
-    }
-
     fun init() {
         recognizer.initialize()
     }
+
     fun release() {
         recognizer.release()
     }
@@ -47,6 +43,7 @@ class SpeechRecognitionManager(mainActivity: MainActivity) : SpeechRecognitionLi
         try {
             isStop = false
             recognizer.recognize(SpeechConfig(LanguageType.KOREAN, EndPointDetectType.AUTO))
+            recognizer.setSpeechRecognitionListener(this)
         }
         catch (e: SpeechRecognitionException) {
             e.printStackTrace()
@@ -60,6 +57,7 @@ class SpeechRecognitionManager(mainActivity: MainActivity) : SpeechRecognitionLi
             }
         }
     }
+
     @WorkerThread override fun onError(errorCode: Int) = warn("$TAG onError : $errorCode")
     @WorkerThread override fun onResult(finalResult: SpeechRecognitionResult?) {
         doAsync {

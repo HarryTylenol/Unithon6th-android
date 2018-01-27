@@ -11,10 +11,11 @@ class MainActivity : BaseActivity(), SpeechRecognitionManager.SpeechListener {
 
     override val layoutResId = R.layout.activity_main
 
-    private val srm: SpeechRecognitionManager = SpeechRecognitionManager(this)
+    lateinit var srm: SpeechRecognitionManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        srm = SpeechRecognitionManager(this)
         speech_button.setOnClickListener {
             when {
                 srm.isRunning -> srm.stop()
