@@ -8,20 +8,21 @@ import org.jetbrains.anko.*
 import team.unithon12.unithonteam12.constant.NaverClientConst
 import team.unithon12.unithonteam12.ext.TAG
 import team.unithon12.unithonteam12.ui.main.MainActivity
+import team.unithon12.unithonteam12.ui.speech.SpeechActivity
 
 /**
  * Created by baghyeongi on 2018. 1. 26..
  */
 
 
-class SpeechRecognitionManager(mainActivity: MainActivity) : SpeechRecognitionListener, AnkoLogger {
+class SpeechRecognitionManager(activity: SpeechActivity) : SpeechRecognitionListener, AnkoLogger {
 
     interface SpeechListener {
         fun onResult(text: String)
     }
 
-    private var listener: SpeechListener = mainActivity
-    private val recognizer: SpeechRecognizer by lazy { SpeechRecognizer(mainActivity, NaverClientConst.CLIENT_ID) }
+    private var listener: SpeechListener = activity
+    private val recognizer: SpeechRecognizer by lazy { SpeechRecognizer(activity, NaverClientConst.CLIENT_ID) }
 
     private var isStop = false
     val isRunning get() = recognizer.isRunning
