@@ -7,19 +7,18 @@
     android:background="@drawable/bg_row_script">
 
     <ImageView
-        android:layout_margin="24dp"
         android:id="@+id/btn_more"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|top"
-        android:tint="#afafbc"
-        app:srcCompat="@drawable/ic_expand_menu" />
+        android:layout_margin="24dp"
+        app:srcCompat="@drawable/ic_expand_delete" />
 
     <LinearLayout
-        android:padding="36dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="36dp">
 
         <TextView
             android:id="@+id/tv_title"
