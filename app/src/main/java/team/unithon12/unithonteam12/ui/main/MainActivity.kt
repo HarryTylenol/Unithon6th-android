@@ -11,13 +11,10 @@ class MainActivity : BaseActivity(), SpeechRecognitionManager.SpeechListener {
 
     override val layoutResId = R.layout.activity_main
 
-    private val srm: SpeechRecognitionManager by lazy {
-        SpeechRecognitionManager(this)
-    }
+    private val srm: SpeechRecognitionManager = SpeechRecognitionManager(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lifecycle.addObserver(srm)
         speech_button.setOnClickListener {
             when {
                 srm.isRunning -> srm.stop()
@@ -28,6 +25,16 @@ class MainActivity : BaseActivity(), SpeechRecognitionManager.SpeechListener {
 
     override fun onResult(text: String) {
         toast(text)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        srm.init()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        srm.release()
     }
 
 }

@@ -1,8 +1,5 @@
 package team.unithon12.unithonteam12.data
 
-import android.arch.lifecycle.Lifecycle
-import android.arch.lifecycle.LifecycleObserver
-import android.arch.lifecycle.OnLifecycleEvent
 import android.support.annotation.WorkerThread
 import com.naver.speech.clientapi.*
 import com.naver.speech.clientapi.SpeechConfig.EndPointDetectType
@@ -17,8 +14,7 @@ import team.unithon12.unithonteam12.ui.main.MainActivity
  */
 
 
-class SpeechRecognitionManager(mainActivity: MainActivity) :
-        SpeechRecognitionListener, AnkoLogger, LifecycleObserver {
+class SpeechRecognitionManager(mainActivity: MainActivity) : SpeechRecognitionListener, AnkoLogger {
 
     interface SpeechListener {
         fun onResult(text: String)
@@ -35,11 +31,12 @@ class SpeechRecognitionManager(mainActivity: MainActivity) :
         recognizer = SpeechRecognizer(mainActivity, NaverClientConst.CLIENT_ID)
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun init() = recognizer.initialize()
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    fun release() = recognizer.release()
+    fun init() {
+        recognizer.initialize()
+    }
+    fun release() {
+        recognizer.release()
+    }
 
     fun stop() {
         isStop = true
@@ -56,7 +53,13 @@ class SpeechRecognitionManager(mainActivity: MainActivity) :
         }
     }
 
-    @WorkerThread override fun onPartialResult(partialResult: String?) = Unit
+    @WorkerThread override fun onPartialResult(partialResult: String?) {
+        doAsync {
+            uiThread {
+                info("$TAG onPartialResult $partialResult")
+            }
+        }
+    }
     @WorkerThread override fun onError(errorCode: Int) = warn("$TAG onError : $errorCode")
     @WorkerThread override fun onResult(finalResult: SpeechRecognitionResult?) {
         doAsync {
@@ -71,7 +74,7 @@ class SpeechRecognitionManager(mainActivity: MainActivity) :
     @WorkerThread override fun onReady() = info("$TAG onReady")
     @WorkerThread override fun onEndPointDetected() = info("$TAG onEndPointDetected")
     @WorkerThread override fun onInactive() = if (!isStop) start() else info("$TAG onInactive")
-    @WorkerThread override fun onRecord(speech: ShortArray?) = Unit
+    @WorkerThread override fun onRecord(speech: ShortArray) = Unit
     @WorkerThread override fun onEndPointDetectTypeSelected(epdType: SpeechConfig.EndPointDetectType?) = info("$TAG onEndPointDetectTypeSelected : $epdType")
 
 }
