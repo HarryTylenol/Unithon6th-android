@@ -35,6 +35,7 @@ class LoginActivity : BaseActivity() {
 
         Glide.with(this).load(R.drawable.bg_artwork_mobile).into(background)
         Glide.with(this).load(R.drawable.ic_appicon_white).into(logo)
+
         btn_login.setOAuthLoginHandler(handler)
         btn_login.setBgResourceId(R.drawable.btn_socialmedia)
 

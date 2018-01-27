@@ -4,5 +4,10 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_gradient">
 
+    <com.alphamovie.lib.AlphaMovieView
+        android:id="@+id/video_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
 
 </FrameLayout>
