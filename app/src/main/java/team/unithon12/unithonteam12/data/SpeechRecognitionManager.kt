@@ -44,8 +44,7 @@ class SpeechRecognitionManager(activity: SpeechActivity) : SpeechRecognitionList
             isStop = false
             recognizer.recognize(SpeechConfig(LanguageType.KOREAN, EndPointDetectType.AUTO))
             recognizer.setSpeechRecognitionListener(this)
-        }
-        catch (e: SpeechRecognitionException) {
+        } catch (e: SpeechRecognitionException) {
             e.printStackTrace()
         }
     }
@@ -53,7 +52,10 @@ class SpeechRecognitionManager(activity: SpeechActivity) : SpeechRecognitionList
     @WorkerThread override fun onPartialResult(partialResult: String?) {
         doAsync {
             uiThread {
-                partialResult?.let { listener.onResult(it) }
+                partialResult?.takeIf { it.trim().isNotEmpty() }?.let {
+                    info("$TAG onPartialResult $partialResult")
+                    listener.onResult(it)
+                }
             }
         }
     }
@@ -66,5 +68,4 @@ class SpeechRecognitionManager(activity: SpeechActivity) : SpeechRecognitionList
     @WorkerThread override fun onInactive() = if (!isStop) start() else info("$TAG onInactive")
     @WorkerThread override fun onRecord(speech: ShortArray) = Unit
     @WorkerThread override fun onEndPointDetectTypeSelected(epdType: SpeechConfig.EndPointDetectType?) = info("$TAG onEndPointDetectTypeSelected : $epdType")
-
 }
