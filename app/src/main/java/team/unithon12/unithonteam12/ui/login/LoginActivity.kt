@@ -12,6 +12,7 @@ import org.jetbrains.anko.uiThread
 import org.json.JSONObject
 import team.unithon12.unithonteam12.R
 import team.unithon12.unithonteam12.constant.NaverClientConst
+import team.unithon12.unithonteam12.ext.isVisible
 import team.unithon12.unithonteam12.ui._base.BaseActivity
 import team.unithon12.unithonteam12.ui.main.MainActivity
 import team.unithon12.unithonteam12.util.UserInfo
@@ -27,11 +28,17 @@ class LoginActivity : BaseActivity() {
         oAuthLogin.showDevelopersLog(true)
         oAuthLogin.init(this, NaverClientConst.CLIENT_ID, NaverClientConst.CLIENT_SECRET, "Login")
 
-        login_button.setOAuthLoginHandler(handler)
-        login_button.setBgResourceId(R.drawable.btn_socialmedia)
+        btn_login.setOAuthLoginHandler(handler)
+        btn_login.setBgResourceId(R.drawable.btn_socialmedia)
 
         UserInfo.token = oAuthLogin.getAccessToken(this@LoginActivity)
-        if (UserInfo.token != null) requestEmail()
+        if (UserInfo.token != null) {
+            btn_login_container.isVisible(false)
+            tv_login_description.isVisible(false)
+            btn_login_container.postDelayed({
+                requestEmail()
+            }, 2000)
+        }
 
     }
 

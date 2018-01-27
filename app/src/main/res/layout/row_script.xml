@@ -4,19 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    android:background="@drawable/bg_row_script"
-    android:padding="24dp">
+    android:background="@drawable/bg_row_script">
 
     <ImageView
+        android:layout_margin="24dp"
         android:id="@+id/btn_more"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|top"
         android:tint="#afafbc"
-        app:srcCompat="@drawable/ic_more_vert_black_24dp" />
+        app:srcCompat="@drawable/ic_expand_menu" />
 
     <LinearLayout
+        android:padding="36dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -28,16 +28,18 @@
             android:layout_marginBottom="8dp"
             android:textColor="#41414c"
             android:textSize="20sp"
-            tools:text="스크립트 제목" />
+            tools:text="투머치토크쇼 by No.61" />
 
         <TextView
             android:id="@+id/tv_subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="31dp"
+            android:ellipsize="end"
+            android:lines="2"
             android:textColor="#afafbc"
             android:textSize="14sp"
-            tools:text="내용" />
+            tools:text="이건 제가 LA에 있었을 때 겪었던 이야기입니다. 제가 미국에 왔을 때 아는 사람이 에이전트 단 한 명밖에 없었습니다. 하지만 지금까지 많은 사람들을 알게 되었고 의미 있고 가치있었어요. 미국은 나에게 기회를 준 곳입니다." />
 
         <TextView
             android:id="@+id/tv_date"
