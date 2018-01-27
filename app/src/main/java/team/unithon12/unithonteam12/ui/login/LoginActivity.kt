@@ -2,15 +2,18 @@
 
 package team.unithon12.unithonteam12.ui.login
 
+import android.Manifest
 import android.os.Bundle
 import com.bumptech.glide.Glide
 import com.nhn.android.naverlogin.OAuthLogin
 import com.nhn.android.naverlogin.OAuthLoginHandler
+import com.tbruyelle.rxpermissions2.RxPermissions
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_login.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import org.json.JSONObject
 import team.unithon12.unithonteam12.R
@@ -27,6 +30,7 @@ class LoginActivity : BaseActivity() {
     override val layoutResId = R.layout.activity_login
 
     private val oAuthLogin: OAuthLogin by lazy { OAuthLogin.getInstance() }
+    private val rxPermission by lazy { RxPermissions(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,13 +44,27 @@ class LoginActivity : BaseActivity() {
         btn_login.setBgResourceId(R.drawable.btn_socialmedia)
 
         UserInfo.token = oAuthLogin.getAccessToken(this@LoginActivity)
-        if (UserInfo.token != null) {
-            btn_login_container.isVisible(false)
-            tv_login_description.isVisible(false)
-            btn_login_container.postDelayed({ requestEmail() }, 2000)
-        }
 
+        checkPermission().subscribe {
+            if (it.not()) {
+                toast("권한을 허용해야 앱을 사용할 수 있습니다")
+                finish()
+            } else {
+                if (UserInfo.token != null) {
+                    btn_login_container.isVisible(false)
+                    tv_login_description.isVisible(false)
+                    btn_login_container.postDelayed({ requestEmail() }, 2000)
+                }
+            }
+        }
     }
+
+    private fun checkPermission() = rxPermission.request(
+        Manifest.permission.RECORD_AUDIO,
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE
+    )
+
 
     fun requestEmail() {
         doAsync {
@@ -65,14 +83,14 @@ class LoginActivity : BaseActivity() {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
-            {
-                finish()
-                startActivity<MainActivity>()
-            },
-            {
-                it.printStackTrace()
-            }
-        )
+                {
+                    finish()
+                    startActivity<MainActivity>()
+                },
+                {
+                    it.printStackTrace()
+                }
+            )
     }
 
     private val handler = object : OAuthLoginHandler() {

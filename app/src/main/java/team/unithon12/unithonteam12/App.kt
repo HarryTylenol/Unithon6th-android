@@ -2,6 +2,7 @@ package team.unithon12.unithonteam12
 
 import android.app.Application
 import android.content.Context
+import team.unithon12.unithonteam12.data.SocketManager
 
 class App : Application(){
     companion object {
@@ -10,5 +11,6 @@ class App : Application(){
     override fun onCreate() {
         super.onCreate()
         context = this
+        SocketManager.connect()
     }
 }
