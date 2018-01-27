@@ -58,7 +58,7 @@ class SpeechActivity : BaseActivity(), SpeechRecognitionManager.SpeechListener {
     override val layoutResId = R.layout.activity_speech
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setupSwipeListener()
+        
         try {
             Glide.with(this).load(R.raw.pulse_motion_graphics).into(iv_eq_view)
         }
