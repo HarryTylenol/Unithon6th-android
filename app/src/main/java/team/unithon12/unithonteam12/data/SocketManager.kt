@@ -3,19 +3,18 @@ package team.unithon12.unithonteam12.data
 import android.util.Log
 import io.socket.client.IO
 import io.socket.client.Socket
-import io.socket.engineio.client.Transport
 import io.socket.engineio.client.transports.WebSocket
 import team.unithon12.unithonteam12.constant.ServerConst
-import org.jetbrains.anko.*
 
 object SocketManager {
 
     private val socket: Socket by lazy {
         IO.socket(
-            ServerConst.URL,
-            IO.Options().apply {
-                transports = arrayOf(WebSocket.NAME)
-            }
+                ServerConst.URL,
+                IO.Options().apply {
+                    port = ServerConst.PORT
+                    transports = arrayOf(WebSocket.NAME)
+                }
         ).apply {
             on(Socket.EVENT_CONNECT, {
                 Log.d("EVENT_CONNECT", "CONNECT")
@@ -38,10 +37,6 @@ object SocketManager {
     fun connect(callback: (Array<out Any>) -> Unit) {
         socket.open()
         socket.on(Socket.EVENT_CONNECT, callback)
-    }
-
-    fun close() {
-        socket.close()
     }
 
     fun listen(eventName: String, callback: (Array<out Any>) -> Unit) {
