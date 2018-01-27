@@ -3,6 +3,7 @@ package team.unithon12.unithonteam12.ui.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import kotlinx.android.synthetic.main.row_script.*
 import team.unithon12.unithonteam12.R
 import team.unithon12.unithonteam12.data.model.Script
 import team.unithon12.unithonteam12.ui._base.BaseAdapter
@@ -13,7 +14,9 @@ import team.unithon12.unithonteam12.ui._base.BaseViewHolder
  */
 class ScriptListViewHolder(override val containerView: View) : BaseViewHolder<Script>(containerView) {
     override fun bind(model: Script) {
-
+        tv_title.text = model.title
+        tv_subtitle.text = model.subttitle
+        tv_date.text = model.date
     }
 }
 

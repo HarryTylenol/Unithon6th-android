@@ -40,6 +40,10 @@ object SocketManager {
         socket.on(Socket.EVENT_CONNECT, callback)
     }
 
+    fun close() {
+        socket.close()
+    }
+
     fun listen(eventName: String, callback: (Array<out Any>) -> Unit) {
         socket.on(eventName, callback)
     }
