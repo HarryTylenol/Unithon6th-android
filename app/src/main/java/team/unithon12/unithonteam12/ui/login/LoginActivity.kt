@@ -35,9 +35,7 @@ class LoginActivity : BaseActivity() {
         if (UserInfo.token != null) {
             btn_login_container.isVisible(false)
             tv_login_description.isVisible(false)
-            btn_login_container.postDelayed({
-                requestEmail()
-            }, 2000)
+            btn_login_container.postDelayed({ requestEmail() }, 2000)
         }
 
     }
