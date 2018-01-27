@@ -2,6 +2,7 @@ package team.unithon12.unithonteam12.ui.speech
 
 import android.Manifest
 import android.os.Bundle
+import com.bumptech.glide.Glide
 import com.tbruyelle.rxpermissions2.RxPermissions
 import kotlinx.android.synthetic.main.activity_speech.*
 import kotlinx.android.synthetic.main.layout_speech.*
@@ -38,15 +39,12 @@ class SpeechActivity : BaseActivity(), SpeechRecognitionManager.SpeechListener {
                     container_speech.isVisible(true)
                     runOnUiThread {
                         try {
-                            video_view.setVideoFromAssets("video.mp4")
-                            video_view.start()
+                            Glide.with(this).load(R.raw.pulse_motion_graphics).into(iv_eq_view)
                         }
-                        catch (e: IllegalStateException) {
+                        catch (e: IllegalArgumentException) {
                             e.printStackTrace()
                         }
                     }
-
-
                     //        btn_speech.setOnClickListener {
                     //        when {
                     //            srm.isRunning -> srm.stop()
@@ -62,21 +60,6 @@ class SpeechActivity : BaseActivity(), SpeechRecognitionManager.SpeechListener {
             }
         }
 
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        video_view.stop()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        video_view.onResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        video_view.onPause()
     }
 
     private fun checkPermission() = rxPermission.request(
