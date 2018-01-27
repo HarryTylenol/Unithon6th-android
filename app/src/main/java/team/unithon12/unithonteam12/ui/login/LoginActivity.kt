@@ -15,16 +15,21 @@ class LoginActivity : BaseActivity() {
 
     override val layoutResId = R.layout.activity_login
 
-    private val onAuthLogin: OAuthLogin by lazy { OAuthLogin.getInstance() }
+    private val oAuthLogin: OAuthLogin by lazy { OAuthLogin.getInstance() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        onAuthLogin.showDevelopersLog(true)
-        onAuthLogin.init(this, NaverClientConst.CLIENT_ID, NaverClientConst.CLIENT_SECRET, "Login")
+        oAuthLogin.showDevelopersLog(true)
+        oAuthLogin.init(this, NaverClientConst.CLIENT_ID, NaverClientConst.CLIENT_SECRET, "Login")
 
         val handler = object : OAuthLoginHandler() {
             override fun run(success: Boolean) {
                 toast(success.toString())
+                when {
+                    success -> {
+                        val token = oAuthLogin.getAccessToken(this@LoginActivity)
+                    }
+                }
             }
         }
 
