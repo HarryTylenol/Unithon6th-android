@@ -19,7 +19,7 @@
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".ui.speech.SpeechActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar.Splash"></activity>
         <activity
             android:name=".ui.login.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar.Splash">

@@ -8,6 +8,7 @@ import org.jetbrains.anko.toast
 import team.unithon12.unithonteam12.R
 import team.unithon12.unithonteam12.data.SocketManager
 import team.unithon12.unithonteam12.data.SpeechRecognitionManager
+import team.unithon12.unithonteam12.ext.isVisible
 import team.unithon12.unithonteam12.ui._base.BaseActivity
 import team.unithon12.unithonteam12.util.UserInfo
 
@@ -22,20 +23,31 @@ class SpeechActivity : BaseActivity(), SpeechRecognitionManager.SpeechListener {
     override val layoutResId = R.layout.activity_speech
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        btn_speech.setOnClickListener {
-            checkPermission().subscribe {
-                if (it)
-                    when {
-                        srm.isRunning -> srm.stop()
-                        else -> srm.start()
-                    }
-                else toast("권한을 승인 하셔야 이용 가능합니다.")
+
+        container_sync.isVisible(true)
+        container_speech.isVisible(false)
+
+        checkPermission().subscribe {
+            if (it) {
+                SocketManager.close()
+                SocketManager.connect {
+
+                    // Connected
+                    container_sync.isVisible(false)
+                    container_speech.isVisible(true)
+
+                    //        btn_speech.setOnClickListener {
+                    //        when {
+                    //            srm.isRunning -> srm.stop()
+                    //            else -> srm.start()
+                    //        }
+                    //        }
+
+                }
             }
+            else toast("권한을 승인 하셔야 이용 가능합니다.")
         }
-        SocketManager.close()
-        SocketManager.connect {
-            // Connected
-        }
+
     }
 
     private fun checkPermission() = rxPermission.request(
