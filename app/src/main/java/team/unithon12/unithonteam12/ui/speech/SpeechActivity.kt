@@ -2,11 +2,13 @@ package team.unithon12.unithonteam12.ui.speech
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.MotionEvent
 import com.bumptech.glide.Glide
 import com.github.pwittchen.swipe.library.rx2.Swipe
 import com.github.pwittchen.swipe.library.rx2.SwipeEvent
 import com.jakewharton.rxbinding2.widget.RxSeekBar
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_speech.*
 import kotlinx.android.synthetic.main.layout_speech.*
@@ -19,6 +21,7 @@ import team.unithon12.unithonteam12.ext.isVisible
 import team.unithon12.unithonteam12.ui._base.BaseActivity
 import team.unithon12.unithonteam12.util.UserInfo
 
+
 /**
  * Created by baghyeongi on 2018. 1. 27..
  */
@@ -28,7 +31,8 @@ class SpeechActivity : BaseActivity(), SpeechRecognitionManager.SpeechListener {
         const val KEY_ENABLED = "enabled"
     }
 
-
+    private val swipe: Swipe by lazy { Swipe() }
+    lateinit var disposable: Disposable
 
     private val srm: SpeechRecognitionManager by lazy { SpeechRecognitionManager(this) }
 
@@ -70,7 +74,7 @@ class SpeechActivity : BaseActivity(), SpeechRecognitionManager.SpeechListener {
             container_speech.isVisible(false)
         }
 
-        Swipe().observe().subscribeOn(Schedulers.computation())
+        disposable = swipe.observe().subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     when {
@@ -78,6 +82,18 @@ class SpeechActivity : BaseActivity(), SpeechRecognitionManager.SpeechListener {
                         it == SwipeEvent.SWIPED_UP -> SocketManager.up()
                     }
                 }
+    }
+
+    override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+        swipe.dispatchTouchEvent(event)
+        return super.dispatchTouchEvent(event)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (disposable != null && !disposable.isDisposed()) {
+            disposable.dispose()
+        }
     }
 
     override fun onNewIntent(intent: Intent?) {
