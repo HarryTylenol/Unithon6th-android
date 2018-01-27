@@ -3,11 +3,15 @@ package team.unithon12.unithonteam12.data
 import android.util.Log
 import io.socket.client.IO
 import io.socket.client.Socket
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.info
 import org.json.JSONArray
 import team.unithon12.unithonteam12.constant.ServerConst
 import team.unithon12.unithonteam12.util.UserInfo
 
-object SocketManager {
+object SocketManager : AnkoLogger {
+
+    var leaveCallback : () -> Unit = {}
 
     private val socket: Socket by lazy {
         IO.socket(
@@ -36,6 +40,7 @@ object SocketManager {
                 val jsonArray = (it.first() as JSONArray)
                 val id = jsonArray[0] as Int
                 Log.e("leave", id.toString())
+                leaveCallback()
                 RoomHelper.leave(id.toLong(), false)
             })
         }
@@ -65,14 +70,17 @@ object SocketManager {
     }
 
     fun size(size: Int) {
+        info("Size emit")
         socket.emit("size", size)
     }
 
     fun spa(spa: Int) {
+        info("Spa emit")
         socket.emit("spa", spa)
     }
 
     fun tspa(tspa: Int) {
+        info("Tspa emit")
         socket.emit("tspa", tspa)
     }
 

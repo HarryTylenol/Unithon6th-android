@@ -20,6 +20,7 @@ import team.unithon12.unithonteam12.R
 import team.unithon12.unithonteam12.constant.NaverClientConst
 import team.unithon12.unithonteam12.data.ApiService
 import team.unithon12.unithonteam12.data.ApiServiceFactory
+import team.unithon12.unithonteam12.data.SocketManager
 import team.unithon12.unithonteam12.ext.isVisible
 import team.unithon12.unithonteam12.ui._base.BaseActivity
 import team.unithon12.unithonteam12.ui.main.MainActivity
@@ -49,7 +50,8 @@ class LoginActivity : BaseActivity() {
             if (it.not()) {
                 toast("권한을 허용해야 앱을 사용할 수 있습니다")
                 finish()
-            } else {
+            }
+            else {
                 if (UserInfo.token != null) {
                     btn_login_container.isVisible(false)
                     tv_login_description.isVisible(false)
@@ -60,37 +62,35 @@ class LoginActivity : BaseActivity() {
     }
 
     private fun checkPermission() = rxPermission.request(
-        Manifest.permission.RECORD_AUDIO,
-        Manifest.permission.READ_EXTERNAL_STORAGE,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
-
 
     fun requestEmail() {
         doAsync {
             val json = oAuthLogin.requestApi(this@LoginActivity, UserInfo.token, "https://openapi.naver.com/v1/nid/me")
             uiThread {
                 UserInfo.email = JSONObject(json).getJSONObject("response").getString("email")
-                UserInfo.token?.let {
-                    requestLogin(it)
-                }
+                UserInfo.token?.let { requestLogin(it) }
+                SocketManager.connect()
             }
         }
     }
 
     private fun requestLogin(token: String) {
         ApiServiceFactory.apiService.login(ApiService.LoginBody(token))
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                {
-                    finish()
-                    startActivity<MainActivity>()
-                },
-                {
-                    it.printStackTrace()
-                }
-            )
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        {
+                            finish()
+                            startActivity<MainActivity>()
+                        },
+                        {
+                            it.printStackTrace()
+                        }
+                )
     }
 
     private val handler = object : OAuthLoginHandler() {

@@ -1,17 +1,15 @@
 package team.unithon12.unithonteam12.ui.speech
 
-import android.Manifest
 import android.content.Intent
 import android.os.Bundle
-import android.widget.SeekBar
 import com.bumptech.glide.Glide
-import com.tbruyelle.rxpermissions2.RxPermissions
+import com.jakewharton.rxbinding2.widget.RxSeekBar
 import kotlinx.android.synthetic.main.activity_speech.*
 import kotlinx.android.synthetic.main.layout_speech.*
-import org.jetbrains.anko.toast
 import team.unithon12.unithonteam12.R
 import team.unithon12.unithonteam12.data.RoomHelper
 import team.unithon12.unithonteam12.data.SocketManager
+import team.unithon12.unithonteam12.data.SocketManager.leaveCallback
 import team.unithon12.unithonteam12.data.SpeechRecognitionManager
 import team.unithon12.unithonteam12.ext.isVisible
 import team.unithon12.unithonteam12.ui._base.BaseActivity
@@ -26,73 +24,48 @@ class SpeechActivity : BaseActivity(), SpeechRecognitionManager.SpeechListener {
         const val KEY_ENABLED = "enabled"
     }
 
+
+
     private val srm: SpeechRecognitionManager by lazy { SpeechRecognitionManager(this) }
 
     override val layoutResId = R.layout.activity_speech
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        try {
+            Glide.with(this).load(R.raw.pulse_motion_graphics).into(iv_eq_view)
+        }
+        catch (e: IllegalArgumentException) {
+            e.printStackTrace()
+        }
+        iv_eq_view.isVisible(false)
         btn_play.setOnClickListener {
-            srm.start()
+            if (!srm.isRunning) {
+                btn_play.setImageResource(R.drawable.btn_pause)
+                srm.start()
+                iv_eq_view.isVisible(true)
+            }
+            else {
+                btn_play.setImageResource(R.drawable.btn_play)
+                srm.stop()
+                iv_eq_view.isVisible(false)
+            }
         }
-        btn_stop.setOnClickListener {
-            srm.stop()
-        }
+        btn_stop.setOnClickListener { srm.stop(); finish() }
 
-        sizeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                SocketManager.size(p1)
-            }
-
-            override fun onStartTrackingTouch(p0: SeekBar?) {
-            }
-
-            override fun onStopTrackingTouch(p0: SeekBar?) {
-            }
-
-        })
-
-        spaSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                SocketManager.spa(p1)
-            }
-
-            override fun onStartTrackingTouch(p0: SeekBar?) {
-            }
-
-            override fun onStopTrackingTouch(p0: SeekBar?) {
-            }
-
-        })
-
-        tspaSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-                SocketManager.tspa(p1)
-            }
-
-            override fun onStartTrackingTouch(p0: SeekBar?) {
-            }
-
-            override fun onStopTrackingTouch(p0: SeekBar?) {
-            }
-
-        })
+        RxSeekBar.changeEvents(sizeSeekBar).subscribe { SocketManager.size(it.view().progress) }
+        RxSeekBar.changeEvents(spaSeekBar).subscribe { SocketManager.spa(it.view().progress) }
+        RxSeekBar.changeEvents(tspaSeekBar).subscribe { SocketManager.tspa(it.view().progress) }
 
         if (intent.getBooleanExtra(KEY_ENABLED, false)) {
             container_sync.isVisible(false)
             container_speech.isVisible(true)
-        } else {
+        }
+        else {
             container_sync.isVisible(true)
             container_speech.isVisible(false)
         }
 
-        runOnUiThread {
-            try {
-                Glide.with(this).load(R.raw.pulse_motion_graphics).into(iv_eq_view)
-            } catch (e: IllegalArgumentException) {
-                e.printStackTrace()
-            }
-        }
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -102,7 +75,8 @@ class SpeechActivity : BaseActivity(), SpeechRecognitionManager.SpeechListener {
             if (intent.getBooleanExtra(KEY_ENABLED, false)) {
                 container_sync.isVisible(false)
                 container_speech.isVisible(true)
-            } else {
+            }
+            else {
                 container_sync.isVisible(true)
                 container_speech.isVisible(false)
             }
@@ -123,11 +97,17 @@ class SpeechActivity : BaseActivity(), SpeechRecognitionManager.SpeechListener {
     override fun onStart() {
         super.onStart()
         srm.init()
+        leaveCallback = { finish() }
     }
 
     override fun onStop() {
         super.onStop()
         srm.release()
+        leaveCallback = {}
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 
 }
