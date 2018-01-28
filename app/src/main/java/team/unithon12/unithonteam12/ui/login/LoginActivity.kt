@@ -39,7 +39,7 @@ class LoginActivity : BaseActivity() {
         oAuthLogin.init(this, NaverClientConst.CLIENT_ID, NaverClientConst.CLIENT_SECRET, "Login")
 
         Glide.with(this).load(R.drawable.bg_artwork_mobile).into(background)
-        Glide.with(this).load(R.drawable.ic_appicon_white).into(logo)
+        Glide.with(this).load(R.drawable.appicon_white).into(logo)
 
         btn_login.setOAuthLoginHandler(handler)
         btn_login.setBgResourceId(R.drawable.btn_socialmedia)

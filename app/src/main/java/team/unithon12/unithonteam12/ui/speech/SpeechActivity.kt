@@ -3,6 +3,7 @@ package team.unithon12.unithonteam12.ui.speech
 import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
+import android.view.View
 import com.bumptech.glide.Glide
 import com.github.pwittchen.swipe.library.rx2.Swipe
 import com.github.pwittchen.swipe.library.rx2.SwipeEvent
@@ -16,16 +17,12 @@ import org.jetbrains.anko.info
 import team.unithon12.unithonteam12.R
 import team.unithon12.unithonteam12.data.RoomHelper
 import team.unithon12.unithonteam12.data.SocketManager
-import team.unithon12.unithonteam12.data.SocketManager.leaveCallback
 import team.unithon12.unithonteam12.data.SpeechRecognitionManager
 import team.unithon12.unithonteam12.ext.isVisible
 import team.unithon12.unithonteam12.ui._base.BaseActivity
 import team.unithon12.unithonteam12.util.UserInfo
 
 
-/**
- * Created by baghyeongi on 2018. 1. 27..
- */
 class SpeechActivity : BaseActivity(), SpeechRecognitionManager.SpeechListener {
 
     companion object {
@@ -38,31 +35,30 @@ class SpeechActivity : BaseActivity(), SpeechRecognitionManager.SpeechListener {
     private val srm: SpeechRecognitionManager by lazy { SpeechRecognitionManager(this) }
     private fun setupSwipeListener() {
         disposable = swipe.observe()
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
 
-                    when {
-                        it == SwipeEvent.SWIPED_DOWN -> {
-                            SocketManager.down()
-                            info("Swipe : $it")
-                        }
-                        it == SwipeEvent.SWIPED_UP -> {
-                            SocketManager.up()
-                            info("Swipe : $it")
-                        }
+                when {
+                    it == SwipeEvent.SWIPED_DOWN -> {
+                        SocketManager.down()
+                        info("Swipe : $it")
+                    }
+                    it == SwipeEvent.SWIPED_UP -> {
+                        SocketManager.up()
+                        info("Swipe : $it")
                     }
                 }
+            }
     }
 
     override val layoutResId = R.layout.activity_speech
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
         try {
             Glide.with(this).load(R.raw.pulse_motion_graphics).into(iv_eq_view)
-        }
-        catch (e: IllegalArgumentException) {
+        } catch (e: IllegalArgumentException) {
             e.printStackTrace()
         }
         iv_eq_view.isVisible(false)
@@ -71,14 +67,16 @@ class SpeechActivity : BaseActivity(), SpeechRecognitionManager.SpeechListener {
                 btn_play.setImageResource(R.drawable.btn_pause)
                 srm.start()
                 iv_eq_view.isVisible(true)
-            }
-            else {
+            } else {
                 btn_play.setImageResource(R.drawable.btn_play)
                 srm.stop()
                 iv_eq_view.isVisible(false)
             }
         }
-        btn_stop.setOnClickListener { srm.stop(); finish() }
+        btn_stop.setOnClickListener {
+            srm.stop();
+            onBackPressed()
+        }
 
         RxSeekBar.changeEvents(sizeSeekBar).subscribe { SocketManager.size(it.view().progress) }
         RxSeekBar.changeEvents(spaSeekBar).subscribe { SocketManager.spa(it.view().progress) }
@@ -87,12 +85,21 @@ class SpeechActivity : BaseActivity(), SpeechRecognitionManager.SpeechListener {
         if (intent.getBooleanExtra(KEY_ENABLED, false)) {
             container_sync.isVisible(false)
             container_speech.isVisible(true)
-            setupSwipeListener()
-        }
-        else {
+        } else {
             container_sync.isVisible(true)
             container_speech.isVisible(false)
         }
+
+        disposable = swipe.observe().subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                if (container_sync.visibility == View.VISIBLE) return@subscribe
+
+                when {
+                    it == SwipeEvent.SWIPED_DOWN -> SocketManager.down()
+                    it == SwipeEvent.SWIPED_UP -> SocketManager.up()
+                }
+            }
     }
 
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {
@@ -114,9 +121,7 @@ class SpeechActivity : BaseActivity(), SpeechRecognitionManager.SpeechListener {
             if (intent.getBooleanExtra(KEY_ENABLED, false)) {
                 container_sync.isVisible(false)
                 container_speech.isVisible(true)
-                setupSwipeListener()
-            }
-            else {
+            } else {
                 container_sync.isVisible(true)
                 container_speech.isVisible(false)
             }
@@ -137,13 +142,11 @@ class SpeechActivity : BaseActivity(), SpeechRecognitionManager.SpeechListener {
     override fun onStart() {
         super.onStart()
         srm.init()
-        leaveCallback = { finish() }
     }
 
     override fun onStop() {
         super.onStop()
         srm.release()
-        leaveCallback = {}
     }
 
     override fun onDestroy() {

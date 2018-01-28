@@ -12,4 +12,9 @@ class App : Application(){
         super.onCreate()
         context = this
     }
+
+    override fun onTerminate() {
+        super.onTerminate()
+        SocketManager.close()
+    }
 }

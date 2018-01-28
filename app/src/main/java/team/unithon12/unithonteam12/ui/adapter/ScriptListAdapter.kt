@@ -10,17 +10,25 @@ import team.unithon12.unithonteam12.extension.toStringByFormat
 import team.unithon12.unithonteam12.ui._base.BaseAdapter
 import team.unithon12.unithonteam12.ui._base.BaseViewHolder
 
-class ScriptListViewHolder(override val containerView: View) : BaseViewHolder<Script>(containerView) {
+class ScriptListViewHolder(override val containerView: View, private val onClickDelete: (Int) -> Unit) : BaseViewHolder<Script>(containerView) {
     override fun bind(model: Script) {
         tv_title.text = model.title
         tv_subtitle.text = model.content
         tv_date.text = model.date.toStringByFormat("yyyy년 MM월 dd")
+        btn_more.setOnClickListener {
+            onClickDelete.invoke(adapterPosition)
+        }
     }
 }
 
-class ScriptListAdapter(override val list: List<Script>, override  val onItemClickListener: (Script) -> Unit) : BaseAdapter<Script, ScriptListViewHolder>() {
+class ScriptListAdapter(override val list: MutableList<Script>, override val onItemClickListener: (Script) -> Unit) : BaseAdapter<Script, ScriptListViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScriptListViewHolder {
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.row_script, parent, false)
-        return ScriptListViewHolder(view)
+        return ScriptListViewHolder(view,this::onDelete)
+    }
+
+    private fun onDelete(position : Int) {
+        list.removeAt(position)
+        notifyDataSetChanged()
     }
 }

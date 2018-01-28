@@ -31,17 +31,27 @@ class MainActivity : BaseActivity() {
                 .includeEdge(true)
                 .build())
         }
+        swipeRefreshLayout.setOnRefreshListener {
+            loadData()
+        }
+        loadData()
+    }
+
+    fun loadData(){
+        swipeRefreshLayout.isRefreshing = true
         ApiServiceFactory.apiService.getScripts()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 {
-                    recyclerview.adapter = ScriptListAdapter(it) {
+                    swipeRefreshLayout.isRefreshing = false
+                    recyclerview.adapter = ScriptListAdapter(it.toMutableList()) {
                         RoomHelper.appJoin(it.id)
                     }
                 },
                 {
                     it.printStackTrace()
+                    swipeRefreshLayout.isRefreshing = false
                 }
             )
     }

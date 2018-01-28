@@ -14,7 +14,7 @@ abstract class BaseViewHolder<M>(view: View) : RecyclerView.ViewHolder(view), La
 
 abstract class BaseAdapter<M, VH : BaseViewHolder<M>> : RecyclerView.Adapter<VH>() {
 
-    abstract val list: List<M>
+    abstract val list: MutableList<M>
     abstract val onItemClickListener : (M) -> Unit
 
     override fun onBindViewHolder(holder: VH, position: Int) {

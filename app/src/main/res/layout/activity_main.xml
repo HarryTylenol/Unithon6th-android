@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="team.unithon12.unithonteam12.ui.main.MainActivity">
+                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                 xmlns:tools="http://schemas.android.com/tools"
+                                                 android:layout_width="match_parent"
+                                                 android:layout_height="match_parent"
+                                                 tools:context="team.unithon12.unithonteam12.ui.main.MainActivity">
 
     <android.support.design.widget.AppBarLayout
-        app:elevation="0dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white">
+        android:background="@android:color/white"
+        app:elevation="0dp">
 
         <android.support.v7.widget.Toolbar
             android:layout_width="match_parent"
@@ -21,33 +21,33 @@
                 android:layout_height="wrap_content">
 
                 <LinearLayout
-                    android:orientation="horizontal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical"
                     android:gravity="center_vertical"
-                    android:layout_gravity="start|center_vertical">
+                    android:orientation="horizontal">
 
                     <ImageView
-                        app:srcCompat="@drawable/ic_appicon_blue"
                         android:layout_width="36dp"
                         android:layout_height="36dp"
-                        android:layout_marginEnd="12dp"/>
+                        android:layout_marginEnd="12dp"
+                        app:srcCompat="@drawable/ic_appicon_blue"/>
 
                     <ImageView
-                        app:srcCompat="@drawable/ic_logo_type"
                         android:layout_width="62dp"
                         android:layout_height="20dp"
-                        android:scaleType="fitXY"/>
+                        android:scaleType="fitXY"
+                        app:srcCompat="@drawable/ic_logo_type"/>
 
 
                 </LinearLayout>
 
                 <ImageView
-                    android:layout_margin="12dp"
-                    app:srcCompat="@drawable/ic_pesonal_logout"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:layout_gravity="end|center_vertical" />
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_margin="12dp"
+                    app:srcCompat="@drawable/ic_pesonal_logout"/>
 
             </FrameLayout>
 
@@ -55,24 +55,30 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v4.widget.NestedScrollView
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#f7f8f9"
+        android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <LinearLayout
+        <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:background="#f7f8f9"
+            >
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerview"
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        </LinearLayout>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
 
-    </android.support.v4.widget.NestedScrollView>
-
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
 </android.support.design.widget.CoordinatorLayout>

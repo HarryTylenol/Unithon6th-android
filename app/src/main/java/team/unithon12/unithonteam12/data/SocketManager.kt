@@ -11,8 +11,6 @@ import team.unithon12.unithonteam12.util.UserInfo
 
 object SocketManager : AnkoLogger {
 
-    var leaveCallback : () -> Unit = {}
-
     private val socket: Socket by lazy {
         IO.socket(
             ServerConst.URL,
@@ -39,9 +37,8 @@ object SocketManager : AnkoLogger {
             }).on("leave", {
                 val jsonArray = (it.first() as JSONArray)
                 val id = jsonArray[0] as Int
-                Log.e("leave", id.toString())
-                leaveCallback()
-                RoomHelper.leave(id.toLong(), false)
+                Log.e("leaveReceive", id.toString())
+                RoomHelper.leave(id.toLong(),false)
             })
         }
     }
@@ -55,18 +52,22 @@ object SocketManager : AnkoLogger {
 
     fun appConnect() {
         socket.emit("AppConnect", JSONArray().put(UserInfo.email))
+        Log.e("appConnect", UserInfo.email)
     }
 
     fun appJoin(currentScriptId: Long) {
         socket.emit("AppJoin", JSONArray().put(currentScriptId).put(UserInfo.email))
+        Log.e("AppJoin", currentScriptId.toString())
     }
 
     fun leave(currentScriptId: Long) {
         socket.emit("leave", JSONArray().put(currentScriptId).put(UserInfo.email))
+        Log.e("leaveEmit", currentScriptId.toString())
     }
 
     fun voice(data: String) {
         socket.emit("voice", data)
+        Log.e("voice", data)
     }
 
     fun size(size: Int) {
@@ -85,14 +86,17 @@ object SocketManager : AnkoLogger {
     }
 
     fun up() {
+        info("up emit")
         socket.emit("up")
     }
 
     fun down() {
+        info("down emit")
         socket.emit("down")
     }
 
     fun close() {
+        info("close emit")
         socket.close()
     }
 }
